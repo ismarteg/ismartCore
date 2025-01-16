@@ -7,9 +7,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ServicesCore.TDO.Clients
+namespace ServicesCore.DTO.Clients
 {
-    public class TDOClient:TDOBase
+    public class DTOClient:DTOBase
     {
         [MaxLength(200)]
         [Required]
@@ -29,6 +29,6 @@ namespace ServicesCore.TDO.Clients
 
       
         public int? ReferedById { get; set; }
-        public TDOClient ReferedBy { get; set; }
+        public DTOClient ReferedBy { get; set; }
     }
 }

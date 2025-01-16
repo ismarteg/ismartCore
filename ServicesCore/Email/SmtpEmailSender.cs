@@ -8,13 +8,13 @@ using System.Threading.Tasks;
 
 namespace ServicesCore.Email
 {
-    internal class SmtpEmailSender
+    public class SmtpEmailSender:IEmailSender
     {
-        private readonly SmtpSettings _settings;
+        public SmtpSettings _settings {  get; set; }
 
-        public SmtpEmailSender(SmtpSettings settings)
+        public SmtpEmailSender()
         {
-            _settings = settings;
+           
         }
 
         public async Task SendEmailAsync(string to, string subject, string body)

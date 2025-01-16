@@ -2,9 +2,9 @@
 using System.ComponentModel.DataAnnotations;
 
 
-namespace ServicesCore.TDO.Users
+namespace ServicesCore.DTO.Users
 {
-    public class TDOUser
+    public class DTOUser
     {
         public string Id { get; set; } = "";
         [Required]

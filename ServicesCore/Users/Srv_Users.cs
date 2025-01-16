@@ -4,11 +4,12 @@ using DbCore.Entities.Users;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using ServicesCore.Email;
-using ServicesCore.TDO.Users;
+using ServicesCore.DTO.Users;
 using ServicesCore.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
@@ -23,7 +24,7 @@ namespace ServicesCore.Users
         private readonly IHttpContextAccessor _httpContextAccessor;
         public readonly IEmailSender _emailSender;
         public Srv_Users(SignInManager<AppUser> signInManager, UserManager<AppUser> userManager,
-            RoleManager<AppRole> roleManager,IEmailSender emailSender,
+            RoleManager<AppRole> roleManager, IEmailSender emailSender,
             IHttpContextAccessor httpContextAccessor, IUnitOfWork unitOfWork,
              IMapper mapper) : base(unitOfWork, mapper)
         {
@@ -34,7 +35,62 @@ namespace ServicesCore.Users
             _emailSender = emailSender;
         }
 
-        public async Task<SrvResponse> CreateUser(TDOUser createUserViewModel)
+        private async Task<bool> ValidateUser(string UserName, string Password)
+        {
+            AppUser _user = await _UserManager.FindByNameAsync(UserName);
+            var validPassword = await _UserManager.CheckPasswordAsync(_user, Password);
+            await CountAccessFailedAsync(_user, _user != null && validPassword);
+            return (_user != null && validPassword);
+        }
+        private async Task CountAccessFailedAsync(AppUser _user, bool Validation)
+        {
+            if (Validation)
+            {
+                await _UserManager.ResetAccessFailedCountAsync(_user);
+            }
+            else if (_user != null)
+            {
+                await _UserManager.AccessFailedAsync(_user);
+            }
+        }
+        public async Task<bool> EmailConfirmation(string UserName)
+        {
+            AppUser _user = await _UserManager.FindByNameAsync(UserName);
+            return (_user.EmailConfirmed == true);
+        }
+
+        public async Task<AppUser> GetUser(ClaimsPrincipal User)
+        {
+            var user = await _UserManager.GetUserAsync(User);
+            return user;
+        }
+        public async Task<AppUser> GetUser(string UserName)
+        {
+            AppUser _user = await _UserManager.FindByNameAsync(UserName);
+            return _user;
+        }
+        public async Task<AppUser> GetUserByID(string Id)
+        {
+            AppUser _user = await _UserManager.FindByIdAsync(Id);
+            return _user;
+        }
+
+        public List<string> GetRoles(string UserId)
+        {
+            AppUser user = GetUserByID(UserId).Result;
+            var roles = _UserManager.GetRolesAsync(user).Result;
+            return roles.ToList();
+        }
+        public List<string> GetRoles(ClaimsPrincipal User)
+        {
+            AppUser user = GetUser(User).Result;
+            var roles = _UserManager.GetRolesAsync(user).Result;
+            return roles.ToList();
+        }
+
+
+
+        public async Task<SrvResponse> CreateUser(DTOUser createUserViewModel)
         {
             try
             {
@@ -84,7 +140,7 @@ namespace ServicesCore.Users
                 var callbackUrl = $"{domain}/Account/ConfirmEmail?code=" + code + "&email=" + user.Email;
                 #endregion
 
-             
+
 
                 #region Send email to clint to verify email
                 var token = HttpUtility.UrlEncode(await _UserManager.GenerateEmailConfirmationTokenAsync(user));
@@ -106,5 +162,66 @@ namespace ServicesCore.Users
 
             }
         }
+
+
+        public DTOUser GetDTOUserById(string Id)
+        {
+            AppUser user = GetUserByID(Id).Result;
+            return _Mapper.Map<DTOUser>(user);
+        }
+        public DTOUser GetDTOUserByUserName(string UserName)
+        {
+            AppUser user = GetUser(UserName).Result;
+            return _Mapper.Map<DTOUser>(user);
+        }
+
+
+        public async Task<SrvResponse> SignInAsync(string UserName, string Password, bool IsRememberMe)
+        {
+
+            try
+            {
+                if (!await ValidateUser(UserName, Password))
+                {
+                    return _response.Error("User Name or Password is incorrect");
+                }
+                if (!await EmailConfirmation(UserName))
+                {
+                    return _response.Error("Please Email Confirmation");
+
+                }
+
+
+                var user = await _UserManager.FindByNameAsync(UserName);
+                user.LastLoginDate = DateTime.Now;
+
+
+                if (user.IsActive == false)
+                {
+                    return _response.Error("This User  Is Disabled");
+                }
+
+
+                var result = await _SignInManager.PasswordSignInAsync(UserName, Password, IsRememberMe,
+                    lockoutOnFailure: false);
+                if (result.Succeeded)
+                {
+                    var roles = await _UserManager.GetRolesAsync(user);
+                    return _response.Success(roles);
+                }
+                else
+                {
+                    return _response.Error($"Failed to sign in");
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+                return _response.Error(ex.Message);
+            }
+        }
+
+
     }
 }

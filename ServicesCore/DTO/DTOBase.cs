@@ -2,9 +2,9 @@
 using System.ComponentModel.DataAnnotations.Schema;
 
 
-namespace ServicesCore.TDO
+namespace ServicesCore.DTO
 {
-    public class TDOBase
+    public class DTOBase
     {
         public int Id { get; set; }
         public bool IsDeleted { get; set; }

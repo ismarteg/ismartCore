@@ -1,7 +1,8 @@
 ﻿using AutoMapper;
 using DbCore.Entities.Clients;
 using DbCore.Entities.Users;
-using ServicesCore.TDO.Users;
+using ServicesCore.DTO.Clients;
+using ServicesCore.DTO.Users;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,8 +15,8 @@ namespace ServicesCore.Mapper
     {
         public MapConfig()
         {
-            CreateMap<TDOUser, AppUser>().ReverseMap();
-            CreateMap<TDOClient, tbClient>()
+            CreateMap<DTOUser, AppUser>().ReverseMap();
+            CreateMap<DTOClient, tbClient>()
                   .ForMember(x => x.CreationDate, opt => opt.Ignore())
                  .ForMember(x => x.CreatorId, opt => opt.Ignore())
                  .ForMember(x => x.LastEditDate, opt => opt.Ignore())
