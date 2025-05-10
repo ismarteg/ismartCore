@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ServicesCore.Users;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,5 +9,6 @@ namespace ServicesCore.Contracts
 {
     public interface IMainServices
     {
+         Srv_Users _Srv_Users { get; }
     }
 }

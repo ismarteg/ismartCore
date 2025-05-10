@@ -8,7 +8,7 @@ namespace Shared.Enums
     public enum FieldTypes
     {
         [Description("نص قصير")]
-        [Display(Name ="نص قصير")]
+        [Display(Name = "نص قصير")]
         Text = 1,
         [Description("اختيارات متعدده")]
         [Display(Name = "اختيارات متعدده")]
@@ -33,7 +33,7 @@ namespace Shared.Enums
         [Description("نص كبير")]
         [Display(Name = "نص كبير")]
         TextArea = 8,
-       
+
         [Description("ملف")]
         [Display(Name = "ملف")]
         FileUpload = 9,

@@ -176,23 +176,23 @@ namespace ServicesCore.Users
         }
 
 
-        public async Task<SrvResponse> SignInAsync(string UserName, string Password, bool IsRememberMe)
+        public async Task<SrvResponse> SignInAsync(DTOUserLogin Model)
         {
 
             try
             {
-                if (!await ValidateUser(UserName, Password))
+                if (!await ValidateUser(Model.UserName, Model.Password))
                 {
                     return _response.Error("User Name or Password is incorrect");
                 }
-                if (!await EmailConfirmation(UserName))
+                if (!await EmailConfirmation(Model.UserName))
                 {
                     return _response.Error("Please Email Confirmation");
 
                 }
 
 
-                var user = await _UserManager.FindByNameAsync(UserName);
+                var user = await _UserManager.FindByNameAsync(Model.UserName);
                 user.LastLoginDate = DateTime.Now;
 
 
@@ -202,7 +202,7 @@ namespace ServicesCore.Users
                 }
 
 
-                var result = await _SignInManager.PasswordSignInAsync(UserName, Password, IsRememberMe,
+                var result = await _SignInManager.PasswordSignInAsync(Model.UserName, Model.Password, Model.IsRememberMe,
                     lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
@@ -212,9 +212,7 @@ namespace ServicesCore.Users
                 else
                 {
                     return _response.Error($"Failed to sign in");
-                }
-
-
+                } 
             }
             catch (Exception ex)
             {

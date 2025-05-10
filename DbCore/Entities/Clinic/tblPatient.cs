@@ -6,6 +6,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.ComponentModel.DataAnnotations;
 using Shared.Enums;
+using DbCore.Entities.Users;
 
 namespace DbCore.Entities.Clinic
 {

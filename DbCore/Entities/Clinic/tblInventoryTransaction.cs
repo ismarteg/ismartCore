@@ -1,13 +1,13 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using Shared.Enums.clinics;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DbCore.Entities.Clinic
 {
     [Table(nameof(tblInventoryTransaction), Schema = "Clinic")]
     public class tblInventoryTransaction : BaseEntity
     {
+        [ForeignKey(nameof(tblInventoryItem))]
         public Guid InventoryItemId { get; set; }
-
-        [ForeignKey("InventoryItemId")]
         public virtual tblInventoryItem InventoryItem { get; set; }
 
         public DateTime TransactionDate { get; set; }
@@ -19,15 +19,14 @@ namespace DbCore.Entities.Clinic
 
         public InventoryTransactionType TransactionType { get; set; }
 
+        [ForeignKey(nameof(tblVisits))]
         public Guid? RelatedVisitId { get; set; }
-
-        [ForeignKey("RelatedVisitId")]
         public virtual tblVisits RelatedVisit { get; set; }
 
-        public Guid? VendorId { get; set; }
 
-        [ForeignKey("VendorId")]
-        public virtual Vendor Vendor { get; set; }
+        [ForeignKey(nameof(tblVendor))]
+        public Guid? VendorId { get; set; }
+        public virtual tblVendor Vendor { get; set; }
         public string Notes { get; set; }
     }
 }

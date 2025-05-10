@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using Shared.Enums.clinics;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DbCore.Entities.Clinic
 {
