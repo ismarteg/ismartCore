@@ -16,7 +16,7 @@ using System.Web;
 
 namespace ServicesCore.Users
 {
-    public class Srv_Users : BaseService<AppUser>
+    public class Srv_Users : BaseService<AppUser,DTOUser>
     {
         private readonly SignInManager<AppUser> _SignInManager;
         private readonly UserManager<AppUser> _UserManager;

@@ -61,38 +61,69 @@ namespace DALCore.Repositories
                 return null;
             }
         }
-
-      
-        public TEntity GetFirstOrDefault(Expression<Func<TEntity, bool>> predicate,
-            Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includes = null)
+        public TEntity Get(string id)
         {
-
-            if (predicate == null)
+            if (!string.IsNullOrEmpty(id))
             {
-                return includes(_db).AsNoTracking().FirstOrDefault();
+                return _db.Find(id);
             }
             else
             {
-                return includes(_db).AsNoTracking().FirstOrDefault(predicate);
+                return null;
+            }
+        }
+        public TEntity Get(Guid id)
+        {
+            if (id != Guid.Empty)
+            {
+                return _db.Find(id);
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+
+        public TEntity GetFirstOrDefault(Expression<Func<TEntity, bool>> predicate,
+            Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includes = null)
+        {
+            IQueryable<TEntity> query = _db;
+
+            if (includes != null)
+            {
+                query = includes(query);
+            }
+            if (predicate == null)
+            {
+                return query.AsNoTracking().FirstOrDefault();
+            }
+            else
+            {
+                return query.AsNoTracking().FirstOrDefault(predicate);
             }
         }
         public TEntity GetLastOrDefault(Expression<Func<TEntity, bool>> predicate,
             Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includes = null)
         {
+            IQueryable<TEntity> query = _db;
+            if (includes != null)
+            {
+                query = includes(query);
+            }
             if (predicate == null)
             {
-                return includes(_db).AsNoTracking().LastOrDefault();
+                return query.AsNoTracking().LastOrDefault();
             }
             else
             {
-                return includes(_db).AsNoTracking().LastOrDefault(predicate);
+                return query.AsNoTracking().LastOrDefault(predicate);
             }
         }
         public TResult GetWithSelect<TResult>(Expression<Func<TEntity, TResult>> selector,
             Expression<Func<TEntity, bool>> predicate)
         {
             IQueryable<TEntity> query = _db;
-
             if (predicate != null)
             {
                 query = query.Where(predicate);
@@ -133,14 +164,14 @@ namespace DALCore.Repositories
             }
 
             return query.AsNoTracking().ToList();
-           
+
         }
 
 
         public IEnumerable<TResult> GetAll<TResult>(
-            Expression<Func<TEntity, bool>> predicate, 
-            Expression<Func<TEntity, TResult>> selector, 
-            Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null, 
+            Expression<Func<TEntity, bool>> predicate,
+            Expression<Func<TEntity, TResult>> selector,
+            Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
             Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includes = null)
         {
             IQueryable<TEntity> query = _db;
@@ -154,7 +185,7 @@ namespace DALCore.Repositories
             {
                 query = query.Where(predicate);
             }
-           
+
             if (orderBy != null)
             {
                 query = orderBy(query);
@@ -162,9 +193,9 @@ namespace DALCore.Repositories
             return query.Select(selector);
         }
 
-        public IEnumerable<TEntity> GetPage(int page, int pagesize, out int count, 
-            Expression<Func<TEntity, bool>> predicate = null, 
-            Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null, 
+        public IEnumerable<TEntity> GetPage(int page, int pagesize, out int count,
+            Expression<Func<TEntity, bool>> predicate = null,
+            Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
             Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includes = null)
         {
             IQueryable<TEntity> query = _db;
@@ -187,10 +218,10 @@ namespace DALCore.Repositories
         }
 
         public IEnumerable<TResult> GetPage<TResult>(
-            Expression<Func<TEntity, TResult>> selector, 
-            Expression<Func<TEntity, bool>> predicate, 
-            int page, int pagesize, out int count, 
-            Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null, 
+            Expression<Func<TEntity, TResult>> selector,
+            Expression<Func<TEntity, bool>> predicate,
+            int page, int pagesize, out int count,
+            Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
             Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includes = null)
         {
             IQueryable<TEntity> query = _db;
@@ -212,11 +243,6 @@ namespace DALCore.Repositories
             return query.Skip((page - 1) * pagesize).Take(pagesize).Select(selector);
         }
 
-
-
-
-       
-       
         public int GetCount()
         {
 
@@ -236,8 +262,8 @@ namespace DALCore.Repositories
             }
         }
 
-       
-       
+
+
 
         /// <summary>
         /// Uses raw SQL queries to fetch the specified <typeparamref name="TEntity" /> data.
@@ -247,6 +273,6 @@ namespace DALCore.Repositories
         /// <returns>An <see cref="IQueryable{TEntity}" /> that contains elements that satisfy the condition specified by raw SQL.</returns>
         public virtual IQueryable<TEntity> GetFromSql(string sql, params object[] parameters) => _db.FromSqlRaw(sql, parameters);
 
-       
+
     }
 }
