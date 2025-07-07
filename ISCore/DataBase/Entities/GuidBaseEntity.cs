@@ -1,9 +1,9 @@
 ﻿
-using DbCore.Entities.Contracts;
-using DbCore.Entities.Users;
+using ISCore.Entities.Contracts;
+using ISCore.Entities.Users;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace DbCore.Entities
+namespace ISCore.Entities
 {
     public class GuidBaseEntity: iSoftEntity<Guid>
     {

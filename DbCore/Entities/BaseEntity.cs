@@ -1,10 +1,11 @@
 ﻿
+using DbCore.Entities.Contracts;
 using DbCore.Entities.Users;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DbCore.Entities
 {
-    public class BaseEntity
+    public class BaseEntity: iSoftEntity<int>
     {
         public int Id { get; set; }
         public bool IsDeleted { get; set; }

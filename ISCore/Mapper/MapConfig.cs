@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using DbCore.Entities.Users;
-using ServicesCore.DTO.Users;
+using ISCore.DTO.Users;
 
 
-namespace ServicesCore.Mapper
+namespace ISCore.Mapper
 {
     public class MapConfig:Profile
     {

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,12 +9,12 @@ namespace ServicesCore
 {
     public class OtpService
     {
-        private readonly AppIdentityDbContext _context;
+        private readonly DbContext _context;
 
         public async Task<string> GenerateOtpAsync(string userId)
         {
             var code = new Random().Next(100000, 999999).ToString();
-            var otp = new UserOtp
+            var otp = new otpusre
             {
                 Id = Guid.NewGuid(),
                 UserId = userId,
