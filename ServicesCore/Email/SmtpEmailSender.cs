@@ -5,6 +5,7 @@ using System.Net.Mail;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Options;
 
 namespace ServicesCore.Email
 {
@@ -12,26 +13,27 @@ namespace ServicesCore.Email
     {
         public SmtpSettings _settings {  get; set; }
 
-        public SmtpEmailSender()
+       
+
+        public SmtpEmailSender(IOptions<SmtpSettings> options)
         {
-           
+            _settings = options.Value;
         }
 
         public async Task SendEmailAsync(string to, string subject, string body)
         {
-            using var client = new SmtpClient(_settings.Host)
+            using var smtp = new SmtpClient(_settings.Host, _settings.Port)
             {
-                Port = _settings.Port,
                 Credentials = new NetworkCredential(_settings.Username, _settings.Password),
-                EnableSsl = _settings.UseSsl,
+                EnableSsl = _settings.UseSsl
             };
 
-            var mailMessage = new MailMessage(_settings.FromEmail, to, subject, body)
+            var message = new MailMessage(_settings.FromEmail, to, subject, body)
             {
-                IsBodyHtml = true,
+                IsBodyHtml = true
             };
 
-            await client.SendMailAsync(mailMessage);
+            await smtp.SendMailAsync(message);
         }
     }
 }

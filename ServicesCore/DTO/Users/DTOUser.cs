@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ServicesCore.DTO.Users
 {
-    public class DTOUser
+    public class DtoUser
     {
         public string Id { get; set; } = "";
         [Required]

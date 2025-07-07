@@ -9,7 +9,8 @@ namespace ServicesCore.Mapper
     {
         public MapConfig()
         {
-            CreateMap<DTOUser, AppUser>().ReverseMap();
+            CreateMap<DtoUser, AppUser>().ReverseMap();
+            CreateMap<DtoOTP, tbOTP>().ReverseMap();
         }
     }
 }

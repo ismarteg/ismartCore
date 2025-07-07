@@ -13,16 +13,18 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
+using ServicesCore.Contracts;
 
 namespace ServicesCore.Users
 {
-    public class Srv_Users : BaseService<AppUser,DTOUser>
+    public class Srv_Users : BaseService<AppUser,DtoUser>
     {
         private readonly SignInManager<AppUser> _SignInManager;
         private readonly UserManager<AppUser> _UserManager;
         private readonly RoleManager<AppRole> _roleManager;
         private readonly IHttpContextAccessor _httpContextAccessor;
         public readonly IEmailSender _emailSender;
+        public readonly IOtpService _otpService;
         public Srv_Users(SignInManager<AppUser> signInManager, UserManager<AppUser> userManager,
             RoleManager<AppRole> roleManager, IEmailSender emailSender,
             IHttpContextAccessor httpContextAccessor, IUnitOfWork unitOfWork,
@@ -33,6 +35,7 @@ namespace ServicesCore.Users
             _httpContextAccessor = httpContextAccessor;
             _roleManager = roleManager;
             _emailSender = emailSender;
+            _otpService = new OtpService();
         }
 
         private async Task<bool> ValidateUser(string UserName, string Password)
@@ -90,7 +93,7 @@ namespace ServicesCore.Users
 
 
 
-        public async Task<SrvResponse> CreateUser(DTOUser createUserViewModel)
+        public async Task<SrvResponse> CreateUser(DtoUser createUserViewModel)
         {
             try
             {
@@ -164,19 +167,19 @@ namespace ServicesCore.Users
         }
 
 
-        public DTOUser GetDTOUserById(string Id)
+        public DtoUser GetDTOUserById(string Id)
         {
             AppUser user = GetUserByID(Id).Result;
-            return _Mapper.Map<DTOUser>(user);
+            return _Mapper.Map<DtoUser>(user);
         }
-        public DTOUser GetDTOUserByUserName(string UserName)
+        public DtoUser GetDTOUserByUserName(string UserName)
         {
             AppUser user = GetUser(UserName).Result;
-            return _Mapper.Map<DTOUser>(user);
+            return _Mapper.Map<DtoUser>(user);
         }
 
 
-        public async Task<SrvResponse> SignInAsync(DTOUserLogin Model)
+        public async Task<SrvResponse> SignInAsync(DtoUserLogin Model)
         {
 
             try
@@ -220,6 +223,19 @@ namespace ServicesCore.Users
             }
         }
 
+        public async Task<SrvResponse> ConfirmOtp(string email, string otp)
+        {
+            var user = await _UserManager.FindByEmailAsync(email);
+            if (user == null)
+                return _response.Error("User not found");
 
+            var valid = await _otpService.VerifyOtpAsync(user.Id, otp);
+            if (!valid)
+                return _response.Error("Invalid OTP");
+
+            user.IsOtpVerified = true;
+            await _UserManager.UpdateAsync(user);
+            return _response.Success("OTP verified");
+        }
     }
 }

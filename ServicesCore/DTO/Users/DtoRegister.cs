@@ -6,10 +6,7 @@ using System.Threading.Tasks;
 
 namespace ServicesCore.DTO.Users
 {
-    public class DtoUserLogin
+    internal class DtoRegister
     {
-        public string UserName {  get; set; }
-        public string Password { get; set; }
-        public bool IsRememberMe { get; set; }
     }
 }

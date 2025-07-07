@@ -24,5 +24,6 @@ namespace DbCore.Entities.Users
         public DateTime LastLoginDate { get; set; }
 
         public virtual List<UserRole> UserRoles { get; set; }
+
     }
 }
