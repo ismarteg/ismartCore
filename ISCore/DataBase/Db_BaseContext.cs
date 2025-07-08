@@ -6,12 +6,16 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ISCore.DataBase
 {
-    public class Db_BaseContext : IdentityDbContext<AppUser, AppRole, string,
-      IdentityUserClaim<string>,
-      UserRole,
-      IdentityUserLogin<string>,
-      IdentityRoleClaim<string>,
-      IdentityUserToken<string>>
+    public class Db_BaseContext<TUser, TRole, TUserRole> :
+    IdentityDbContext<TUser, TRole, string,
+                      IdentityUserClaim<string>,
+                      TUserRole,
+                      IdentityUserLogin<string>,
+                      IdentityRoleClaim<string>,
+                      IdentityUserToken<string>>
+    where TUser : IdentityUser
+    where TRole : IdentityRole
+    where TUserRole  : IdentityUserRole<string>
     {
         public Db_BaseContext(DbContextOptions options) : base(options)
         {
