@@ -6,13 +6,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ISCore.Entities.Places
+namespace ISCore.DTO.Places
 {
-    public class tbRegion : GuidBaseEntity
+    public class DTOCity: DTOBase
     {
         public string Title { get; set; }
-        [ForeignKey(nameof(tbCity))]
-        public int CityId { get; set; }
-        public tbCity City { get; set; }
+
+        [ForeignKey(nameof(tbCountry))]
+        public int CountryId { get; set; }
+        public tbCountry Country { get; set; }
     }
 }

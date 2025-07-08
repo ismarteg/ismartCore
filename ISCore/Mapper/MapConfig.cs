@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using DbCore.Entities.Users;
 using ISCore.DTO.Users;
+using ISCore.Entities.Users;
 
 
 namespace ISCore.Mapper
@@ -9,7 +9,7 @@ namespace ISCore.Mapper
     {
         public MapConfig()
         {
-            CreateMap<DTOUser, AppUser>().ReverseMap();
+            CreateMap<DtoUser, AppUser>().ReverseMap();
             CreateMap<DtoOTP, tbOTP>().ReverseMap();
         }
     }

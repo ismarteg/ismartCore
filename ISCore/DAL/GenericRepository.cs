@@ -1,4 +1,5 @@
-﻿using ISCore.Repositories.Contracts;
+﻿
+using ISCore.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 
