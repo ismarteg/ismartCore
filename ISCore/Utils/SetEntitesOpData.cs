@@ -61,26 +61,26 @@ namespace ISCore.Utils
 
        
 
-        public static void SetCreationData(this iSoftEntity entity, string userId)
+        public static void SetCreationData<Tkey>(this iSoftEntity<Tkey> entity, string userId)
         {
             entity.CreatorId = userId;
             entity.CreationDate = DateTime.Now;
         }
 
-        public static void SetUpdateData(this iSoftEntity entity, string userId)
+        public static void SetUpdateData<Tkey>(this iSoftEntity<Tkey> entity, string userId)
         {
             entity.LastEditorId = userId;
             entity.LastEditDate = DateTime.Now;
         }
 
-        public static void SetDeleteData(this iSoftEntity entity, string userId)
+        public static void SetDeleteData<Tkey>(this iSoftEntity<Tkey> entity, string userId)
         {
             entity.IsDeleted = true;
             entity.LastEditorId = userId;
             entity.LastEditDate = DateTime.Now;
         }
 
-        public static void SetUnDelete(this iSoftEntity entity, string userId)
+        public static void SetUnDelete<Tkey>(this iSoftEntity<Tkey> entity, string userId)
         {
             entity.IsDeleted = false;
             entity.LastEditorId = userId;
