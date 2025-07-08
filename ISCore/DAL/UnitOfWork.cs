@@ -1,7 +1,6 @@
 ﻿
-using ISCore.Repositories;
-using ISCore.Repositories.Contracts;
-using ISCore.UnitofWorks.Contracts;
+using ISCore.Interfaces;
+using ISCore.Responses;
 using Microsoft.EntityFrameworkCore;
 using System.Collections;
 

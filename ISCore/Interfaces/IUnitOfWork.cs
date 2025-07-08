@@ -1,6 +1,8 @@
 ﻿
 
 
+using ISCore.Responses;
+
 namespace ISCore.Interfaces
 {
     public interface IUnitOfWork : IDisposable
