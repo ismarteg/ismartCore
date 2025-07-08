@@ -1,44 +1,66 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
-using System.Security.Claims;
-using System.Web;
+using ISCore.DataBase.Entities.Contracts;
+using ISCore.DTO.Users;
+using ISCore.Emails;
 using ISCore.Entities.Users;
+using ISCore.Enums;
 using ISCore.Interfaces;
 using ISCore.Responses;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using ISCore.DTO.Users;
-using ISCore.Enums;
-using ISCore.Emails;
+using Services;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
+using System.Text;
+using System.Threading.Tasks;
+using System.Web;
+using ISCore.Mapper;
 
-namespace Services.Users
+namespace ISCore.Services.Users
 {
-    public class Srv_Users : NormalBaseService<AppUser>
+    public class GSrv_Users<TUser, TRole, TdtoUser> : IUsersBaseService<TUser, TRole, TdtoUser>
+      where TUser : IdentityUser,IAppUser ,new()
+      where TRole : IdentityRole
+        where TdtoUser : IDTOUser
     {
-        private readonly SignInManager<AppUser> _SignInManager;
-        private readonly UserManager<AppUser> _UserManager;
-        private readonly RoleManager<AppRole> _roleManager;
+
+        public IMapper _Mapper { get; }
+        public SrvResponse _response { get; }
+        public IUnitOfWork _UnitOfWork { get; set; }
+
+        private readonly SignInManager<TUser> _SignInManager;
+        private readonly UserManager<TUser> _UserManager;
+        private readonly RoleManager<TRole> _roleManager;
         private readonly IHttpContextAccessor _httpContextAccessor;
         public readonly IEmailServices _emailSender;
-        public Srv_Users(SignInManager<AppUser> signInManager, UserManager<AppUser> userManager,
-            RoleManager<AppRole> roleManager, IEmailServices emailSender,
+       
+        public GSrv_Users(SignInManager<TUser> signInManager, UserManager<TUser> userManager,
+            RoleManager<TRole> roleManager, IEmailServices emailSender,
             IHttpContextAccessor httpContextAccessor, IUnitOfWork unitOfWork,
-             IMapper mapper) : base(unitOfWork, mapper)
+            IMapper mapper) 
         {
             _SignInManager = signInManager;
             _UserManager = userManager;
             _httpContextAccessor = httpContextAccessor;
             _roleManager = roleManager;
             _emailSender = emailSender;
+            _UnitOfWork = unitOfWork;
+            _Mapper = mapper;
+            _response = new SrvResponse();
         }
 
+        //------private Methods 
         private async Task<bool> ValidateUser(string UserName, string Password)
         {
-            AppUser _user = await _UserManager.FindByNameAsync(UserName);
+            TUser _user = await _UserManager.FindByNameAsync(UserName);
             var validPassword = await _UserManager.CheckPasswordAsync(_user, Password);
             await CountAccessFailedAsync(_user, _user != null && validPassword);
             return (_user != null && validPassword);
         }
-        private async Task CountAccessFailedAsync(AppUser _user, bool Validation)
+        private async Task CountAccessFailedAsync(TUser _user, bool Validation)
         {
             if (Validation)
             {
@@ -49,44 +71,47 @@ namespace Services.Users
                 await _UserManager.AccessFailedAsync(_user);
             }
         }
+        //------End private Methods 
+
+        //------Public Methods
         public async Task<bool> EmailConfirmation(string UserName)
         {
-            AppUser _user = await _UserManager.FindByNameAsync(UserName);
+            TUser _user = await _UserManager.FindByNameAsync(UserName);
             return (_user.EmailConfirmed == true);
         }
 
-        public async Task<AppUser> GetUser(ClaimsPrincipal User)
+        public async Task<TUser> GetUser(ClaimsPrincipal User)
         {
             var user = await _UserManager.GetUserAsync(User);
             return user;
         }
-        public async Task<AppUser> GetUser(string UserName)
+        public async Task<TUser> GetUser(string UserName)
         {
-            AppUser _user = await _UserManager.FindByNameAsync(UserName);
+            TUser _user = await _UserManager.FindByNameAsync(UserName);
             return _user;
         }
-        public async Task<AppUser> GetUserByID(string Id)
+        public async Task<TUser> GetUserByID(string Id)
         {
-            AppUser _user = await _UserManager.FindByIdAsync(Id);
+            TUser _user = await _UserManager.FindByIdAsync(Id);
             return _user;
         }
 
         public List<string> GetRoles(string UserId)
         {
-            AppUser user = GetUserByID(UserId).Result;
+            TUser user = GetUserByID(UserId).Result;
             var roles = _UserManager.GetRolesAsync(user).Result;
             return roles.ToList();
         }
         public List<string> GetRoles(ClaimsPrincipal User)
         {
-            AppUser user = GetUser(User).Result;
+            TUser user = GetUser(User).Result;
             var roles = _UserManager.GetRolesAsync(user).Result;
             return roles.ToList();
         }
 
 
 
-        public async Task<SrvResponse> CreateUser(DtoUser createUserViewModel)
+        public async Task<SrvResponse> CreateUser(TdtoUser createUserViewModel)
         {
             try
             {
@@ -107,7 +132,7 @@ namespace Services.Users
                         $"Email '{emailExists.Email}' does exist",
                         nameof(createUserViewModel.Email));
                 }
-                AppUser user = new AppUser()
+                TUser user = new TUser()
                 {
                     Email = createUserViewModel.Email,
                     UserName = createUserViewModel.Email,
@@ -159,16 +184,15 @@ namespace Services.Users
             }
         }
 
-
-        public DtoUser GetDTOUserById(string Id)
+        public TdtoUser GetDTOUserById(string Id)
         {
-            AppUser user = GetUserByID(Id).Result;
-            return _Mapper.Map<DtoUser>(user);
+            TUser user = GetUserByID(Id).Result;
+            return user.MapItem<TdtoUser>();
         }
-        public DtoUser GetDTOUserByUserName(string UserName)
+        public TdtoUser GetTDTOUserByUserName(string UserName)
         {
-            AppUser user = GetUser(UserName).Result;
-            return _Mapper.Map<DtoUser>(user);
+            TUser user = GetUser(UserName).Result;
+            return  user.MapItem<TdtoUser>();
         }
 
 
@@ -231,5 +255,19 @@ namespace Services.Users
             }
         }
 
+        public TdtoUser GeTdtoUserById(string Id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IDTOUser GeTdtoUserByUserName(string UserName)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<SrvResponse> SignInAsync<TdtoUserLogin>(TdtoUserLogin Model) where TdtoUserLogin : class
+        {
+            throw new NotImplementedException();
+        }
     }
 }

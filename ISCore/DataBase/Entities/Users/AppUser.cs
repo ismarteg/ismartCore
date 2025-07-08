@@ -1,10 +1,11 @@
 ﻿
+using ISCore.DataBase.Entities.Contracts;
 using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
 
 namespace ISCore.Entities.Users
 {
-    public class AppUser : IdentityUser
+    public class AppUser : IdentityUser, IAppUser
     {
         // should be corrected
         [MaxLength(50)]
