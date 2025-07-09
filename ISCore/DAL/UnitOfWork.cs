@@ -1,6 +1,4 @@
-﻿
-using ISCore.Interfaces;
-using ISCore.Responses;
+﻿using ISCore.DAL.interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Collections;
 

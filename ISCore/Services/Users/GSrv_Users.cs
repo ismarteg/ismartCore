@@ -1,14 +1,8 @@
 ﻿using AutoMapper;
 using ISCore.DataBase.Entities.Contracts;
-using ISCore.DTO.Users;
-using ISCore.Emails;
 using ISCore.Entities.Users;
-using ISCore.Enums;
-using ISCore.Interfaces;
-using ISCore.Responses;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using ISCore.DTO.Users;
 using Services;
 using System;
 using System.Collections.Generic;
@@ -17,7 +11,12 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
-using ISCore.Mapper;
+using ISCore.DAL.interfaces;
+using ISCore.Services.Interface;
+using ISCore.Services.DTO.Users;
+using ISCore.Services.Mapper;
+using ISCore.Utils.Enums;
+using ISCore.Utils.Emails;
 
 namespace ISCore.Services.Users
 {

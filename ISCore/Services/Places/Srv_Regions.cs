@@ -1,5 +1,5 @@
-﻿using ISCore.DTO.Places;
-using ISCore.Entities.Places;
+﻿using ISCore.Entities.Places;
+using ISCore.Services.DTO.Places;
 
 
 namespace ISCore.Services.Places

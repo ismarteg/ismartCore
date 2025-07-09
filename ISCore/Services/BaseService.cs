@@ -1,9 +1,8 @@
 ﻿using AutoMapper;
 using ISCore.Entities.Contracts;
-using ISCore.Interfaces;
-using ISCore.Responses;
-using ISCore.Mapper;
 using ISCore.Utils;
+using ISCore.DAL.interfaces;
+using ISCore.Services.Mapper;
 
 namespace ISCore.Services
 {
@@ -18,6 +17,13 @@ namespace ISCore.Services
 
         public BaseService()
         {
+            _response = new SrvResponse();
+        }
+
+        public BaseService(IUnitOfWork unitOfWork)
+        {
+            _UnitOfWork = unitOfWork;         
+            _TbRepository = _UnitOfWork.repo<TEntity>();
             _response = new SrvResponse();
         }
 

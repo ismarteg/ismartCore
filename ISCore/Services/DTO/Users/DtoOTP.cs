@@ -1,17 +1,19 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using ISCore.Services.DTO;
 
-namespace ISCore.Entities.Users
+namespace ISCore.Services.DTO.Users
 {
-    [Table(nameof(tbOTP), Schema = "Main")]
-    public class tbOTP : BaseEntity
+    public class DtoOTP : DTOBase<Guid>
     {
-        [ForeignKey(nameof(AppUser))]
         public string UserId { get; set; }
         public string OTPNumper { get; set; }
         public DateTime SendDate { get; set; }
         public DateTime ExpirationDate { get; set; }
         public bool IsSMS { get; set; }
         public bool IsOtpVerified { get; set; } = false;
-
     }
 }

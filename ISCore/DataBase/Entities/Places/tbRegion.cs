@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace ISCore.Entities.Places
 {
+    [Table(nameof(tbRegion), Schema = "main")]
     public class tbRegion : GuidBaseEntity
     {
         public string Title { get; set; }

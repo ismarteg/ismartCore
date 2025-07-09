@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
+using ISCore.DAL.interfaces;
 using ISCore.DataBase.Entities.Contracts;
 using ISCore.Entities.Users;
-using ISCore.Interfaces;
+using ISCore.Services.Interface;
 using ISCore.Services.Users;
+using ISCore.Utils.Emails;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;

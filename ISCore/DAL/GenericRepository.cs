@@ -1,5 +1,5 @@
 ﻿
-using ISCore.Interfaces;
+using ISCore.DAL.interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 
