@@ -25,8 +25,8 @@ namespace ISCore.Services.Interface
         List<string> GetRoles(ClaimsPrincipal User);
         Task<SrvResponse> CreateUser(TdtoUser createUserViewModel);
         TdtoUser GeTdtoUserById(string Id);
-        IDTOUser GeTdtoUserByUserName(string UserName);
-        Task<SrvResponse> SignInAsync<TdtoUserLogin>(TdtoUserLogin Model) where TdtoUserLogin : class;
+        TdtoUser GeTdtoUserByUserName(string UserName);
+        Task<SrvResponse> SignInAsync(DtoUserLogin Model);
         Task<SrvResponse> SignOut();
 
     }

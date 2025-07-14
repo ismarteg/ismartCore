@@ -13,6 +13,9 @@ namespace ISCore.Utils.Enums
         BadRequest = 400,
         Unauthorized = 401,
         InternalServerError = 500,
-        ServiceUnavailable = 503
+        ServiceUnavailable = 503,
+        LoginFaild = 1201,
+        emailNotConfirmed = 1202,
+        UserIsInActive = 1203,
     }
 }

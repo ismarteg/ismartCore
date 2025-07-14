@@ -183,17 +183,17 @@ namespace ISCore.Services.Users
             }
         }
 
-        public TdtoUser GetDTOUserById(string Id)
+        public TdtoUser GeTdtoUserById(string Id)
         {
             TUser user = GetUserByID(Id).Result;
             return user.MapItem<TdtoUser>();
         }
-        public TdtoUser GetTDTOUserByUserName(string UserName)
+        public TdtoUser GeTdtoUserByUserName(string UserName)
         {
             TUser user = GetUser(UserName).Result;
             return  user.MapItem<TdtoUser>();
         }
-
+       
 
 
         public async Task<SrvResponse> SignInAsync(DtoUserLogin Model)
@@ -203,12 +203,11 @@ namespace ISCore.Services.Users
             {
                 if (!await ValidateUser(Model.UserName, Model.Password))
                 {
-                    return _response.Error("User Name or Password is incorrect");
+                    return _response.Error(ResponseCode.LoginFaild,"User Name or Password is incorrect");
                 }
                 if (!await EmailConfirmation(Model.UserName))
                 {
-                    return _response.Error("Please Email Confirmation");
-
+                    return _response.Error(ResponseCode.emailNotConfirmed,"Please Email Confirmation");
                 }
 
 
@@ -218,7 +217,7 @@ namespace ISCore.Services.Users
 
                 if (user.IsActive == false)
                 {
-                    return _response.Error("This User  Is Disabled");
+                    return _response.Error(ResponseCode.UserIsInActive,"This User Is Disabled");
                 }
 
 
@@ -231,7 +230,7 @@ namespace ISCore.Services.Users
                 }
                 else
                 {
-                    return _response.Error($"Failed to sign in");
+                    return _response.Error(ResponseCode.LoginFaild,"Failed to sign in");
                 }
             }
             catch (Exception ex)
@@ -254,19 +253,8 @@ namespace ISCore.Services.Users
             }
         }
 
-        public TdtoUser GeTdtoUserById(string Id)
-        {
-            throw new NotImplementedException();
-        }
+       
 
-        public IDTOUser GeTdtoUserByUserName(string UserName)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<SrvResponse> SignInAsync<TdtoUserLogin>(TdtoUserLogin Model) where TdtoUserLogin : class
-        {
-            throw new NotImplementedException();
-        }
+     
     }
 }
