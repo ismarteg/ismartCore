@@ -17,6 +17,8 @@ using ISCore.Services.DTO.Users;
 using ISCore.Services.Mapper;
 using ISCore.Utils.Enums;
 using ISCore.Utils.Emails;
+using ISCore.Entities.Users.Const;
+using Microsoft.EntityFrameworkCore;
 
 namespace ISCore.Services.Users
 {
@@ -193,8 +195,29 @@ namespace ISCore.Services.Users
             TUser user = GetUser(UserName).Result;
             return  user.MapItem<TdtoUser>();
         }
-       
 
+        public async Task<SrvResponse> ForceChangePassword(string UserId,string Password)
+        {
+            var user = await _UserManager.FindByIdAsync(UserId);
+            var RemoveResult = await _UserManager.RemovePasswordAsync(user);
+
+            if (RemoveResult.Succeeded)
+            {
+                var addpassword = await _UserManager.AddPasswordAsync(user, Password);
+                if (addpassword.Succeeded)
+                {
+                    return _response.Success();
+                }
+                else
+                {
+                    return _response.Error(string.Join(", ", addpassword.Errors.Select(x => x.Description)));
+                }
+            }
+            else
+            {
+                return _response.Error(string.Join(", ", RemoveResult.Errors.Select(x => x.Description)));
+            }
+        }
 
         public async Task<SrvResponse> SignInAsync(DtoUserLogin Model)
         {
@@ -253,8 +276,65 @@ namespace ISCore.Services.Users
             }
         }
 
-       
+        public SrvResponse GetUsres(string Searchtext, int PageIndex = 1, int PageSize = 20)
+        {
+            int Count = 0;
+            try
+            {
+                List<AppUser> users = _UnitOfWork.repo<AppUser>().GetPage(PageIndex, PageSize,out Count,
+                    predicate: x =>
+                    (x.UserName.Contains(Searchtext) ||
+                    x.Email.Contains(Searchtext) ||
+                    x.FirstName.Contains(Searchtext) ||
+                    x.LastName.Contains(Searchtext) ||
+                    Searchtext == null)
+                    && x.UserRoles.Any(x => x.Role.Name != Cnst_Roles.SuperAdmin),
+                    includes: inc => inc.Include(Role =>
+                Role.UserRoles).ThenInclude(x => x.Role)).ToList();
 
-     
+                List<TdtoUser> _Users = _Mapper.Map<List<TdtoUser>>(users);
+                return _response.Success(_Users, Count);
+            }
+            catch (Exception ex)
+            {
+                return _response.Error(ex.Message);
+            }
+        }
+        public async Task<SrvResponse> updateUser(TdtoUser dto_user)
+        {
+            TUser user = dto_user.MapItem<TUser>();
+            try
+            {
+                var result = await _UserManager.UpdateAsync(user);
+                if (result.Succeeded)
+                {
+                    return _response.Success();
+                }
+                return _response.Error(
+                    string.Join(",/n",
+                    result.Errors.SelectMany(x => x.Description)));
+            }
+            catch (Exception ex)
+            {
+                return _response.Error(ex.Message);
+            }
+        }
+        public async Task<SrvResponse> updateUserRole(string userId, string OldRoleName, string NewRoleName)
+        {
+            try
+            {
+                TUser user = await _UserManager.FindByIdAsync(userId);
+                var userRoles = await _UserManager.GetRolesAsync(user);
+                _UserManager.RemoveFromRolesAsync(user, userRoles).Wait();
+                IdentityResult RoleAddResult = _UserManager.AddToRoleAsync(user, NewRoleName).Result;
+                return _response.Success();
+
+            }
+            catch (Exception ex)
+            {
+                return _response.Error(ex.Message);
+            }
+        }
+
     }
 }

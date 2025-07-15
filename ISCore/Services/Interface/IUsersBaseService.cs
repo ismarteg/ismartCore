@@ -28,6 +28,9 @@ namespace ISCore.Services.Interface
         TdtoUser GeTdtoUserByUserName(string UserName);
         Task<SrvResponse> SignInAsync(DtoUserLogin Model);
         Task<SrvResponse> SignOut();
-
+        Task<SrvResponse> updateUser(TdtoUser dto_user);
+        SrvResponse GetUsres(string Searchtext, int PageIndex = 1, int PageSize = 20);
+        Task<SrvResponse> ForceChangePassword(string UserId, string Password);
+        Task<SrvResponse> updateUserRole(string userId, string OldRoleName, string NewRoleName);
     }
 }
