@@ -14,7 +14,7 @@ namespace ISCore.Entities.Places
         public string Title { get; set; }
 
         [ForeignKey(nameof(tbCountry))]
-        public int CountryId { get; set; }
+        public Guid CountryId { get; set; }
         public tbCountry Country { get; set; }
     }
 }

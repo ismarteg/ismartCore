@@ -16,15 +16,16 @@ namespace ISCore.Services.Mapper
                 .ForMember(x => x.CreatorId, opt => opt.Ignore())
                 .ForMember(x => x.LastEditDate, opt => opt.Ignore())
                 .ForMember(x => x.LastEditorId, opt => opt.Ignore()).ReverseMap();
-            CreateMap<DTOCountry, tbOTP>().ForMember(x => x.CreationDate, opt => opt.Ignore())
+            CreateMap<DTOCountry, tbCountry>().ForMember(x => x.CreationDate, opt => opt.Ignore())
                 .ForMember(x => x.CreatorId, opt => opt.Ignore())
                 .ForMember(x => x.LastEditDate, opt => opt.Ignore())
-                .ForMember(x => x.LastEditorId, opt => opt.Ignore()).ReverseMap(); ;
+                .ForMember(x => x.LastEditorId, opt => opt.Ignore()).ReverseMap(); 
             CreateMap<DTOCity, tbCity>().ForMember(x => x.CreationDate, opt => opt.Ignore())
                 .ForMember(x => x.CreatorId, opt => opt.Ignore())
                 .ForMember(x => x.LastEditDate, opt => opt.Ignore())
-                .ForMember(x => x.LastEditorId, opt => opt.Ignore()).ReverseMap(); ;
-            CreateMap<DTOCity, tbRegion>().ForMember(x => x.CreationDate, opt => opt.Ignore())
+                .ForMember(x => x.LastEditorId, opt => opt.Ignore()).ReverseMap();
+
+            CreateMap<DTORegion, tbRegion>().ForMember(x => x.CreationDate, opt => opt.Ignore())
                 .ForMember(x => x.CreatorId, opt => opt.Ignore())
                 .ForMember(x => x.LastEditDate, opt => opt.Ignore())
                 .ForMember(x => x.LastEditorId, opt => opt.Ignore()).ReverseMap();

@@ -12,9 +12,7 @@ namespace ISCore.Services.DTO.Places
     public class DTOCity : DTOBase<Guid>
     {
         public string Title { get; set; }
-
-        [ForeignKey(nameof(tbCountry))]
-        public int CountryId { get; set; }
-        public tbCountry Country { get; set; }
+        public Guid CountryId { get; set; }
+        public DTOCountry Country { get; set; }
     }
 }
