@@ -30,7 +30,12 @@ namespace ISCore.Services.Places
               orderBy: x => x.OrderBy(y => y.Title).ThenBy(y => y.Id)
               ).ToList();
             return _response.Success(list.MapList<DTORegion>());
-
+        }
+        public SrvResponse GetDeapItem(Guid Id) {
+            tbRegion item = _TbRepository.GetFirstOrDefault(predicate: x => x.Id == Id,
+                includes: x => x.Include(y => y.City).ThenInclude(x => x.Country)
+                );
+            return _response.Success(item.MapItem<DTORegion>());
         }
     }
 }
