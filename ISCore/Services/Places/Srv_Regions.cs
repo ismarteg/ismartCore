@@ -23,5 +23,14 @@ namespace ISCore.Services.Places
                 ).ToList();
             return _response.Success(list.MapList<DTORegion>(), Count);
         }
+        public SrvResponse GetRegion(Guid CityId)
+        {
+            List<tbRegion> list = _TbRepository.GetAll(
+              predicate: x => x.CityId == CityId,
+              orderBy: x => x.OrderBy(y => y.Title).ThenBy(y => y.Id)
+              ).ToList();
+            return _response.Success(list.MapList<DTORegion>());
+
+        }
     }
 }

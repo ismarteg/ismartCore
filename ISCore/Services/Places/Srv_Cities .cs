@@ -23,7 +23,14 @@ namespace ISCore.Services.Places
                 ).ToList();
             return _response.Success(list.MapList<DTOCity>(), Count);
         }
+        public SrvResponse GetCities(Guid CountryId)
+        {
+            List<tbCity> list = _TbRepository.GetAll(
+              predicate: x =>  x.CountryId == CountryId,
+              orderBy: x => x.OrderBy(y => y.Title).ThenBy(y => y.Id) 
+              ).ToList();
+            return _response.Success(list.MapList<DTOCity>());
 
-      
+        }
     }
 }
