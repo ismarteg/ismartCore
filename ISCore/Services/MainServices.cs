@@ -16,11 +16,11 @@ namespace Services
     public class MainServices: IMainServices
     {
      
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
-        private readonly IEmailServices _emailSender;
-        private readonly IHostingEnvironment _hostingEnv;
-        private readonly IHttpContextAccessor _httpContextAccessor;
+        protected readonly IUnitOfWork _unitOfWork;
+        protected readonly IMapper _mapper;
+        protected readonly IEmailServices _emailSender;
+        protected readonly IHostingEnvironment _hostingEnv;
+        protected readonly IHttpContextAccessor _httpContextAccessor;
 
         Srv_Countries _srvCountries;
         Srv_Cities _srvCities;
