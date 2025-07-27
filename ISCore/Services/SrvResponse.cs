@@ -39,6 +39,8 @@ namespace ISCore.Services
         public object Data { get; set; }
         public object AdditionalData { get; set; } = string.Empty;
         public string PropertyName { get; set; } = string.Empty;
+
+        public object innerObject { get; set; } = null;
     }
 
 
@@ -68,13 +70,15 @@ namespace ISCore.Services
             response.Message = message;
             return response;
         }
-        public static SrvResponse Error(this SrvResponse response, string message)
+        public static SrvResponse Error(this SrvResponse response, string message,object innerObject = null)
         {
             response = response ?? new SrvResponse();
             response._ResponseCode = ResponseCode.InternalServerError;
             response.Message = message;
+            response.innerObject = innerObject;
             return response;
         }
+
         public static SrvResponse BadRequst(this SrvResponse response, string message)
         {
             response = response ?? new SrvResponse();

@@ -54,7 +54,12 @@ namespace ISCore.DAL
             catch (Exception ex)
             {
                 r.Message = ex.Message;
+                if (ex.InnerException!=null)
+                {
+                    r.Message += $" , InnerMessage: {ex.InnerException.Message}";
+                }
                 r.IsCompleted = false;
+                r.innerObject = ex;
             }
             return r;
         }

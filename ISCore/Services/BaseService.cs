@@ -86,7 +86,7 @@ namespace ISCore.Services
             var result = _UnitOfWork.Save();
             return result.IsCompleted
                 ? _response.Success()
-                : _response.Error("Error occurred while saving the item. " + result.Message);
+                : _response.Error("Error occurred while saving the item. " + result.Message,result.innerObject);
         }
         public virtual SrvResponse GetAll()
         {
