@@ -15,6 +15,7 @@ namespace ISCore.Services.DTO.Users
         public string LastName { get; set; }
         public string Email { get; set; }
         public string National_ID { get; set; } = "";
+        public string UserName { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
         public string? FilePath { get; set; }
         public string? Role { get; set; }

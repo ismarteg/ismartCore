@@ -302,7 +302,9 @@ namespace ISCore.Services.Users
         }
         public async Task<SrvResponse> updateUser(TdtoUser dto_user)
         {
-            TUser user = dto_user.MapItem<TUser>();
+            var user = await GetUserByID(dto_user.Id);
+            //user = dto_user.MapItem<TUser>();
+            _Mapper.Map(dto_user, user);
             try
             {
                 var result = await _UserManager.UpdateAsync(user);
@@ -310,9 +312,7 @@ namespace ISCore.Services.Users
                 {
                     return _response.Success();
                 }
-                return _response.Error(
-                    string.Join(",/n",
-                    result.Errors.SelectMany(x => x.Description)));
+                return _response.Error(result.getError(),innerObject:result.Errors);
             }
             catch (Exception ex)
             {
