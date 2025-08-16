@@ -10,7 +10,7 @@ namespace ISCore.DAL
     public class GenericRepository<TEntity> : IRepository<TEntity> where TEntity : class
     {
         private readonly DbContext _context;
-        private readonly DbSet<TEntity> _db;
+        public  DbSet<TEntity> _db { get; }
 
         public GenericRepository(DbContext context)
         {

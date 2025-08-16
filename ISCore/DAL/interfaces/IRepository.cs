@@ -1,10 +1,14 @@
-﻿using Microsoft.EntityFrameworkCore.Query;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using System.Linq.Expressions;
 
 namespace ISCore.DAL.interfaces
 {
     public interface IRepository<TEntity> where TEntity : class
     {
+         DbSet<TEntity> _db { get; }
+
+
         void Add(TEntity entity);
         void AddRange(IEnumerable<TEntity> entities);
 
