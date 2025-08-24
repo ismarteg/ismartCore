@@ -45,6 +45,7 @@ namespace ISCore.Services
             return _response.Success(dto);
         }
 
+        
         public virtual SrvResponse DeleteItem(Guid id, string userId)
         {
             var entity = _TbRepository.Get(id);

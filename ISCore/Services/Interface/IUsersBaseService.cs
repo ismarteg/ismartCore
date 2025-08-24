@@ -30,6 +30,7 @@ namespace ISCore.Services.Interface
         Task<SrvResponse> SignOut();
         Task<SrvResponse> updateUser(TdtoUser dto_user);
         SrvResponse GetUsres(string Searchtext, int PageIndex = 1, int PageSize = 20);
+        Task<SrvResponse> ChangePassword(Dto_ChangePassword changePassword);
         Task<SrvResponse> ForceChangePassword(string UserId, string Password);
         Task<SrvResponse> updateUserRole(string userId, string OldRoleName, string NewRoleName);
     }

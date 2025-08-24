@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+﻿    using AutoMapper;
 using ISCore.DataBase.Entities.Contracts;
 using ISCore.Entities.Users;
 using Microsoft.AspNetCore.Http;
@@ -57,6 +57,7 @@ namespace ISCore.Services.Users
         private async Task<bool> ValidateUser(string UserName, string Password)
         {
             TUser _user = await _UserManager.FindByNameAsync(UserName);
+
             var validPassword = await _UserManager.CheckPasswordAsync(_user, Password);
             await CountAccessFailedAsync(_user, _user != null && validPassword);
             return (_user != null && validPassword);
@@ -196,6 +197,24 @@ namespace ISCore.Services.Users
             return  user.MapItem<TdtoUser>();
         }
 
+        public async Task<SrvResponse> ChangePassword(Dto_ChangePassword changePassword)
+        {
+
+            if (!await ValidateUser(changePassword.Username,changePassword.OldPassword))
+            {
+                return _response.Error("User Name or Password is incorrect");
+            }
+            var user = await _UserManager.FindByNameAsync(changePassword.Username);
+            if (user == null)
+                return _response.Error("User not found");
+
+            var status = await _UserManager.ChangePasswordAsync(user, changePassword.OldPassword, changePassword.NewPassword);
+            if (!status.Succeeded)
+            {
+                return _response.Error(string.Join(", ", status.Errors.Select(e => e.Description)));
+            }
+            return _response.Success();
+        }
         public async Task<SrvResponse> ForceChangePassword(string UserId,string Password)
         {
             var user = await _UserManager.FindByIdAsync(UserId);
