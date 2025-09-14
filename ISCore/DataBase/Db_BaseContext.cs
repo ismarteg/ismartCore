@@ -47,8 +47,12 @@ namespace ISCore.DataBase
         public DbSet<tbRegion> tbRegion { get; set; }
         public DbSet<tbCountry> tbCountry { get; set; }
 
+    }
 
-
-
+    public class Db_BaseContext : Db_BaseContext<AppUser, AppRole, UserRole>
+    {
+        public Db_BaseContext(DbContextOptions options) : base(options)
+        {
+        }
     }
 }

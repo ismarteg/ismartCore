@@ -19,6 +19,7 @@ using ISCore.Utils.Enums;
 using ISCore.Utils.Emails;
 using ISCore.Entities.Users.Const;
 using Microsoft.EntityFrameworkCore;
+using ISCore.Services.HelperClass;
 
 namespace ISCore.Services.Users
 {
@@ -52,15 +53,29 @@ namespace ISCore.Services.Users
             _Mapper = mapper;
             _response = new SrvResponse();
         }
-
+        
         //------private Methods 
-        private async Task<bool> ValidateUser(string UserName, string Password)
+        private async Task<ValideUserResponse> ValidateUser(string UserName, string Password)
         {
+            ValideUserResponse Repo= new ValideUserResponse();
+            string mesasge = "";
             TUser _user = await _UserManager.FindByNameAsync(UserName);
-
+            Repo.IsValid = true;
+            Repo.Message = "Valid User";
+            if (_user == null)
+            {
+                Repo.IsValid= false;
+                Repo.Message= "User Not Found,";
+            }
             var validPassword = await _UserManager.CheckPasswordAsync(_user, Password);
-            await CountAccessFailedAsync(_user, _user != null && validPassword);
-            return (_user != null && validPassword);
+           // await CountAccessFailedAsync(_user, _user != null && validPassword);
+            if (!validPassword)
+            {
+                Repo.IsValid= false;
+                Repo.Message += "Password is incorrect";
+            }
+            
+            return Repo;
         }
         private async Task CountAccessFailedAsync(TUser _user, bool Validation)
         {
@@ -199,8 +214,9 @@ namespace ISCore.Services.Users
 
         public async Task<SrvResponse> ChangePassword(Dto_ChangePassword changePassword)
         {
+            var valideUser = await ValidateUser(changePassword.Username, changePassword.OldPassword);
 
-            if (!await ValidateUser(changePassword.Username,changePassword.OldPassword))
+            if (valideUser.IsValid)
             {
                 return _response.Error("User Name or Password is incorrect");
             }
@@ -217,25 +233,32 @@ namespace ISCore.Services.Users
         }
         public async Task<SrvResponse> ForceChangePassword(string UserId,string Password)
         {
-            var user = await _UserManager.FindByIdAsync(UserId);
-            var RemoveResult = await _UserManager.RemovePasswordAsync(user);
-
-            if (RemoveResult.Succeeded)
+            try
             {
-                var addpassword = await _UserManager.AddPasswordAsync(user, Password);
-                if (addpassword.Succeeded)
+                var user = await _UserManager.FindByIdAsync(UserId);
+                var RemoveResult = await _UserManager.RemovePasswordAsync(user);
+                if (RemoveResult.Succeeded)
                 {
-                    return _response.Success();
+                    var addpassword = await _UserManager.AddPasswordAsync(user, Password);
+                    if (addpassword.Succeeded)
+                    {
+                        return _response.Success();
+                    }
+                    else
+                    {
+                        return _response.Error(string.Join(", ", addpassword.Errors.Select(x => x.Description)));
+                    }
                 }
                 else
                 {
-                    return _response.Error(string.Join(", ", addpassword.Errors.Select(x => x.Description)));
+                    return _response.Error(string.Join(", ", RemoveResult.Errors.Select(x => x.Description)));
                 }
             }
-            else
+            catch (Exception ex)
             {
-                return _response.Error(string.Join(", ", RemoveResult.Errors.Select(x => x.Description)));
+                return _response.Error(ex.Message);
             }
+          
         }
 
         public async Task<SrvResponse> SignInAsync(DtoUserLogin Model)
@@ -243,9 +266,10 @@ namespace ISCore.Services.Users
 
             try
             {
-                if (!await ValidateUser(Model.UserName, Model.Password))
+                var valideUser = await ValidateUser(Model.UserName, Model.Password);
+                if (!valideUser.IsValid)
                 {
-                    return _response.Error(ResponseCode.LoginFaild,"User Name or Password is incorrect");
+                    return _response.Error(ResponseCode.LoginFaild,valideUser.Message);
                 }
                 if (!await EmailConfirmation(Model.UserName))
                 {

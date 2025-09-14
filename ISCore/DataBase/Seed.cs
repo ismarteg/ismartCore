@@ -127,6 +127,17 @@ namespace ISCore.DataBase
             }
         }
 
+        public static async Task ForceChangepPassword(IApplicationBuilder app,string username)
+        {
+            using (var serviceScope = app.ApplicationServices.CreateScope())
+            {
+                var dbContext = serviceScope.ServiceProvider.GetService<Tdbcontext>();
+                var usrMgr = serviceScope.ServiceProvider.GetRequiredService<UserManager<TUser>>();
+                var user = await usrMgr.FindByNameAsync(username);
+                var changepassword = await usrMgr.RemovePasswordAsync(user);
+                var newpassword = await usrMgr.AddPasswordAsync(user, "P@ssW0rd" );
 
+            }
+        }
     }
 }
