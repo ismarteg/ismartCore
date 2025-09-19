@@ -7,7 +7,7 @@ namespace ISCore.DAL
     public class UnitOfWork<TContext> : IUnitOfWork where TContext : DbContext
     {
 
-        // private readonly SiteDBContext _context;
+        
         private readonly TContext _context;
         private Hashtable _Repositorie;
 
@@ -15,11 +15,7 @@ namespace ISCore.DAL
         {
             _context = context;
         }
-        //public UnitOfWork(SiteDBContext context)
-        //      {
-        //          _context = context;
-        //      }
-
+       
         public void Dispose()
         {
             _context.Dispose();
