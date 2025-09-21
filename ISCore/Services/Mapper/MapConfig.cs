@@ -12,7 +12,8 @@ namespace ISCore.Services.Mapper
         public MapConfig()
         {
             CreateMap<DtoUser, AppUser>().ReverseMap();
-            CreateMap<DtoOTP, tbOTP>().ForMember(x => x.CreationDate, opt => opt.Ignore())
+            CreateMap<DtoOTP, tbOTP>()
+                .ForMember(x => x.CreationDate, opt => opt.Ignore())
                 .ForMember(x => x.CreatorId, opt => opt.Ignore())
                 .ForMember(x => x.LastEditDate, opt => opt.Ignore())
                 .ForMember(x => x.LastEditorId, opt => opt.Ignore()).ReverseMap();
